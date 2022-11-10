@@ -1,2 +1,6 @@
-Secrets/
-Knowledge/
+Secrets
+Knowledge
+Logs/module_02_logs.log
+env
+.pytest_cache
+__pycache__
