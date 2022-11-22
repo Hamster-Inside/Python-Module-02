@@ -1,6 +1,10 @@
-import password_validator, url_connector
+""" Small Script to show if password has leaked """
+import typing
 import logging
-logging.basicConfig(filename='Logs\module_02_logs.log', encoding='utf-8', level=logging.INFO)
+import password_validator
+import url_connector
+
+logging.basicConfig(filename=r'Logs\module_02_logs.log', encoding='utf-8', level=logging.INFO)
 
 # Password:
 # check if password is not on site 'have i been pwnd'
@@ -10,49 +14,56 @@ logging.basicConfig(filename='Logs\module_02_logs.log', encoding='utf-8', level=
 
 validator = password_validator.PasswordValidator()
 
-passwords_file_name = "passwords.txt"
-safe_passwords_file_name = "safe_passwords.txt"
-unsafe_passwords_file_name = "unsafe_passwords.txt"
+PASSWORDS_FILE_NAME = "passwords.txt"
+SAFE_PASSWORDS_FILE_NAME = "safe_passwords.txt"
+UNSAFE_PASSWORDS_FILE_NAME = "unsafe_passwords.txt"
 
 
-def create_safe_and_unsafe_files(passwords_file_name, safe_passwords_file_name, unsafe_passwords_file_name):
-    directory_of_files = "Secrets/"
-    list_of_passworods = []
-    with open(directory_of_files + passwords_file_name) as input_file, open(
-            directory_of_files + safe_passwords_file_name, mode='w') as safe_output_file, open(
-        directory_of_files + unsafe_passwords_file_name, mode='w') as unsafe_output_file:
+def create_safe_and_unsafe_files(files_dir: str,
+                                 passwords_file_name: str,
+                                 safe_passwords_file: str,
+                                 unsafe_passwords_file: str) -> None:
+    """Writes passwords which are safe and unsafe to corresponding file"""
+
+    with open(files_dir + passwords_file_name, encoding="UTF-8") as input_file, open(
+              files_dir + safe_passwords_file, mode='w', encoding="UTF-8") as safe_output, open(
+              files_dir + unsafe_passwords_file, mode='w', encoding="UTF-8") as unsafe_output:
         for line in input_file:
             if validator.check_if_password_is_strong_enough(line):
-                safe_output_file.write(line)
+                safe_output.write(line)
             else:
-                unsafe_output_file.write(line)
+                unsafe_output.write(line)
 
 
 connection = url_connector.UrlConnector()
 
-directory_of_files = "Secrets/"
+DIRECTORY_OF_FILES = "Secrets/"
 
 
 # print(connection.get_data())
 
-def get_list_of_passwords_from_file(passwords_file_name):
-    list = []
-    with open(directory_of_files + passwords_file_name, mode='r') as input_file:
+def get_list_of_passwords_from_file(passwords_file_name: str) -> typing.List:
+    """Returns list of passwords from txt file"""
+    pass_list = []
+    with open(DIRECTORY_OF_FILES + passwords_file_name, encoding="UTF-8", mode='r') as input_file:
         for line in input_file:
-            list.append(line.strip())
-    return list
+            pass_list.append(line.strip())
+    return pass_list
 
 
-create_safe_and_unsafe_files(passwords_file_name, safe_passwords_file_name, unsafe_passwords_file_name)
+create_safe_and_unsafe_files(DIRECTORY_OF_FILES,
+                             PASSWORDS_FILE_NAME,
+                             SAFE_PASSWORDS_FILE_NAME,
+                             UNSAFE_PASSWORDS_FILE_NAME)
 
-passwords_list = get_list_of_passwords_from_file(passwords_file_name)
+passwords_list = get_list_of_passwords_from_file(PASSWORDS_FILE_NAME)
 for current_password in passwords_list:
-    hits_of_pass = 0
-    current_sha1 = validator.change_to_sha1(current_password)
-    add_to_url = current_sha1[0:5]
-    rest_of_the_sha1 = current_sha1[5:]
-    connection.set_url('https://api.pwnedpasswords.com/range/' + add_to_url)
-    number_of_leaks = connection.get_hits_of_password(rest_of_the_sha1)
+    HITS_OF_PASS = 0
+    CURRENT_SHA1 = validator.change_to_sha1(current_password)
+    ADD_TO_URL = CURRENT_SHA1[0:5]
+    REST_OF_THE_SHA1 = CURRENT_SHA1[5:]
+    connection.set_url('https://api.pwnedpasswords.com/range/' + ADD_TO_URL)
+    number_of_leaks = connection.get_hits_of_password(REST_OF_THE_SHA1)
     print(f'{current_password} --> {number_of_leaks}')
 
 logging.warning('cat')
