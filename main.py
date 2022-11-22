@@ -65,5 +65,7 @@ for current_password in passwords_list:
     connection.set_url('https://api.pwnedpasswords.com/range/' + ADD_TO_URL)
     number_of_leaks = connection.get_hits_of_password(REST_OF_THE_SHA1)
     print(f'{current_password} --> {number_of_leaks}')
+    if number_of_leaks > 0:
+        logging.warning(f'Password {current_password} leaked {number_of_leaks} times')
 
-logging.warning('cat')
+
