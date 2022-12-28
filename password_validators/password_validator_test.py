@@ -1,13 +1,13 @@
 import pytest
 
-from password_validator import (LengthValidator,
-                                OneNumberValidator,
-                                OneSpecialSignValidator,
-                                LowercaseValidator,
-                                UppercaseValidator,
-                                HaveIBeenPwndValidator,
-                                PasswordValidator,
-                                ValidationError)
+from password_validators import (LengthValidator,
+                                 OneNumberValidator,
+                                 OneSpecialSignValidator,
+                                 LowercaseValidator,
+                                 UppercaseValidator,
+                                 HaveIBeenPwndValidator,
+                                 PasswordValidator,
+                                 ValidationError)
 
 
 def test_password_length_with_given_length_positive():
